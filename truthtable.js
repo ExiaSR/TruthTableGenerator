@@ -82,7 +82,7 @@ function latexchar(c,tv) {
 					case 'tf': return 'F';
 					case 'oz': return '0';
 			}
-		case '~' : return '$\\sim$';
+		case '~' : return '$\\neg$';
 		case '&' : return '$\\&$';
 		case 'v' : return '$\\lor$';
 		case '>' : return '$\\rightarrow$';
@@ -241,19 +241,25 @@ function latexTable(table,trees,tv) {
 	for(var i=1;i<table[0].length;i++) { // make remaining rows
 		out += mkrow(table,i)+'\\\\\r\n';	
 	}
+
 	var begintable = '\%NOTE: requires \\usepackage{color}\r\n\\begin{tabular}{';
 	for(var i=0;i<colnum;i++) {
 		if(dividers.indexOf(i)>=0 && dividers.indexOf(i+1)>=0) {
-			begintable += ' | c'
+			begintable += ' c'
 		} else if(dividers.indexOf(i)>=0) {
-			begintable += parloc.indexOf(i)>=0 ? ' | c@{}' : ' | c@{ }';
+			if (dividers.indexOf(i) == 0) begintable += parloc.indexOf(i)>=0  ? ' | c@{}' : ' | c@{ }';
+			else begintable += parloc.indexOf(i)>=0  ? ' c ' : ' c@{} ';
 		} else if(dividers.indexOf(i+1)>=0) {
-			begintable += parloc.indexOf(i)>=0 ? '@{}c@{ }' : '@{ }c';
+			begintable += parloc.indexOf(i)>=0 ? ' c ' : ' c';
 		} else {
-			begintable += parloc.indexOf(i)>=0 ? '@{}c@{}' : '@{ }c@{ }';
+			begintable += parloc.indexOf(i)>=0 ? ' c ' : ' c ';
 		}
 	}
-	
+	// add cline
+	for (let i = 1; i < dividers.length; i++) {
+		out += `\\cline{${dividers[i]-2}-${dividers[i]-2}} `
+	}
+	out += '\r\n'
 	return begintable+'}\r\n'+out+'\\end{tabular}';
 	
 	function mkrow(tbl,r) { // makes a table row
@@ -264,7 +270,7 @@ function latexTable(table,trees,tv) {
 		for(var i=0;i<tbl.length;i++) { // i = table segment
 			for(var j=0;j<tbl[i][r].length;j++) { // r = row, j = cell
 				if(mcs[i-1]==j && r!=0) {
-					rw += '\\textcolor{red}{'+latexchar(tbl[i][r][j],tv)+'} & '; // add main connective cell char
+					rw += '\\multicolumn{1}{|c|}{'+latexchar(tbl[i][r][j],tv)+'} & '; // add main connective cell char
 				} else {
 					rw += latexchar(tbl[i][r][j],tv)+' & '; // add cell char
 				}
