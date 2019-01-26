@@ -242,13 +242,13 @@ function latexTable(table,trees,tv) {
 		out += mkrow(table,i)+'\\\\\r\n';	
 	}
 
-	var begintable = '\%NOTE: requires \\usepackage{color}\r\n\\begin{tabular}{';
+	var begintable = '\%NOTE: requires \\usepackage{color}\r\n\\begin{center}\\begin{tabular}{';
 	for(var i=0;i<colnum;i++) {
 		if(dividers.indexOf(i)>=0 && dividers.indexOf(i+1)>=0) {
 			begintable += ' c'
 		} else if(dividers.indexOf(i)>=0) {
-			if (dividers.indexOf(i) == 0) begintable += parloc.indexOf(i)>=0  ? ' | c@{}' : ' | c@{ }';
-			else begintable += parloc.indexOf(i)>=0  ? ' c ' : ' c@{} ';
+			if (dividers.indexOf(i) == 0) begintable += parloc.indexOf(i)>=0  ? ' | c ' : ' | c ';
+			else begintable += parloc.indexOf(i)>=0  ? ' c ' : ' c ';
 		} else if(dividers.indexOf(i+1)>=0) {
 			begintable += parloc.indexOf(i)>=0 ? ' c ' : ' c';
 		} else {
@@ -260,7 +260,7 @@ function latexTable(table,trees,tv) {
 		out += `\\cline{${dividers[i]-2}-${dividers[i]-2}} `
 	}
 	out += '\r\n'
-	return begintable+'}\r\n'+out+'\\end{tabular}';
+	return begintable+'}\r\n'+out+'\\end{tabular}\\end{center}';
 	
 	function mkrow(tbl,r) { // makes a table row
 		dividers = [];
